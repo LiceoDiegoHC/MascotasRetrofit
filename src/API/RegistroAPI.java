@@ -21,4 +21,13 @@ public interface RegistroAPI {
     
     @GET("consultar.php")
     public Call<List<Mascotas>> ConsultarMascotas();
+    
+    @FormUrlEncoded
+    @POST("actualizar.php")
+    public Call<List<Respuesta>> ModificarMascota(
+            @Field("idM") int id,
+            @Field("nombreM") String nombre,
+            @Field("tipoM") String tipo,
+            @Field("edadM") int edad
+    );
 }

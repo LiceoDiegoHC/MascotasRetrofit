@@ -1,8 +1,17 @@
 package GUI;
 
+import API.Cliente;
+import Interfaces.Respuesta;
+import java.util.List;
+import javax.swing.JOptionPane;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ModificarMascota extends javax.swing.JDialog {
 
     private int id;
+    private List<Respuesta> res;
 
     public ModificarMascota(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -127,7 +136,35 @@ public class ModificarMascota extends javax.swing.JDialog {
     }
     
     private void ModificarMascota(){
+        String nombre = textNombre.getText().trim();
+        String tipo = textTipo.getText().trim();
+        int edad = Integer.parseInt(textEdad.getText().toString());
         
+        Call<List<Respuesta>> call = Cliente
+                .getInstance()
+                .getMyApi()
+                .ModificarMascota(id, nombre, tipo, edad);
+        
+        call.enqueue(new Callback<List<Respuesta>>(){
+            @Override
+            public void onResponse(Call<List<Respuesta>> call, Response<List<Respuesta>> rspns) {
+                if(rspns != null && rspns.isSuccessful()){
+                    res = rspns.body();
+                    if(res.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Error en la peticion");
+                    }else{
+                        JOptionPane.showMessageDialog(null, res.get(0).getRespuesta());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Respuesta>> call, Throwable thrwbl) {
+                JOptionPane.showMessageDialog(null, "Error en el servidor");
+            }
+            
+        });
+
     }
     
 }

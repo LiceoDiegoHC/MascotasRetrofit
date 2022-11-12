@@ -42,6 +42,7 @@ public class ConsultaMascotas extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
+        Modificar = new javax.swing.JButton();
 
         jButton2.setText("jButton1");
 
@@ -63,6 +64,7 @@ public class ConsultaMascotas extends javax.swing.JFrame {
             }
         });
 
+        tabla.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -79,6 +81,7 @@ public class ConsultaMascotas extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tabla.setRowHeight(40);
         jScrollPane1.setViewportView(tabla);
         if (tabla.getColumnModel().getColumnCount() > 0) {
             tabla.getColumnModel().getColumn(0).setResizable(false);
@@ -87,6 +90,14 @@ public class ConsultaMascotas extends javax.swing.JFrame {
             tabla.getColumnModel().getColumn(3).setResizable(false);
         }
 
+        Modificar.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        Modificar.setText("Modificar");
+        Modificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ModificarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -94,10 +105,12 @@ public class ConsultaMascotas extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1048, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 371, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -109,7 +122,8 @@ public class ConsultaMascotas extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(Modificar))
                 .addContainerGap())
         );
 
@@ -126,7 +140,12 @@ public class ConsultaMascotas extends javax.swing.JFrame {
         Consulta();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void ModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModificarActionPerformed
+        SeleccionarMascota();
+    }//GEN-LAST:event_ModificarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Modificar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -169,4 +188,19 @@ public class ConsultaMascotas extends javax.swing.JFrame {
         });
     }
     
+    private void SeleccionarMascota(){
+        if(tabla.getSelectedRow() < 0){
+            JOptionPane.showMessageDialog(this, "Selecciona una fila");
+        }else{
+            ModificarMascota mm = new ModificarMascota(this, true);
+            mm.setDatos(
+                    respuesta.get(tabla.getSelectedRow()).getId(),
+                    respuesta.get(tabla.getSelectedRow()).getNombre(),
+                    respuesta.get(tabla.getSelectedRow()).getTipo(),
+                    respuesta.get(tabla.getSelectedRow()).getEdad()
+            );
+            mm.setVisible(true);
+            Consulta();
+        }
+    }
 }
