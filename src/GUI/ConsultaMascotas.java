@@ -1,12 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI;
 
 import API.Cliente;
 import API.RegistroAPI;
 import Interfaces.Mascotas;
+import Interfaces.Respuesta;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -22,6 +19,7 @@ public class ConsultaMascotas extends javax.swing.JFrame {
 
     private int filas = 0;
     private List<Mascotas> respuesta;
+    private List<Respuesta> mensaje;
     
     public ConsultaMascotas() {
         initComponents();
@@ -43,6 +41,7 @@ public class ConsultaMascotas extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
         Modificar = new javax.swing.JButton();
+        Modificar1 = new javax.swing.JButton();
 
         jButton2.setText("jButton1");
 
@@ -98,6 +97,14 @@ public class ConsultaMascotas extends javax.swing.JFrame {
             }
         });
 
+        Modificar1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        Modificar1.setText("Eliminar");
+        Modificar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Modificar1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -110,7 +117,9 @@ public class ConsultaMascotas extends javax.swing.JFrame {
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(Modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 371, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Modificar1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -123,7 +132,8 @@ public class ConsultaMascotas extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton3)
-                    .addComponent(Modificar))
+                    .addComponent(Modificar)
+                    .addComponent(Modificar1))
                 .addContainerGap())
         );
 
@@ -144,8 +154,13 @@ public class ConsultaMascotas extends javax.swing.JFrame {
         SeleccionarMascota();
     }//GEN-LAST:event_ModificarActionPerformed
 
+    private void Modificar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Modificar1ActionPerformed
+        EliminarMascota();
+    }//GEN-LAST:event_Modificar1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Modificar;
+    private javax.swing.JButton Modificar1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -153,6 +168,38 @@ public class ConsultaMascotas extends javax.swing.JFrame {
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 
+    public void EliminarMascota(){
+        int fila = tabla.getSelectedRow();
+        if(fila < 0){
+            JOptionPane.showMessageDialog(this, "Selecciona una fila");
+        }else{
+            Call<List<Respuesta>> call = Cliente
+                .getInstance()
+                .getMyApi()
+                .EliminarMascota(respuesta.get(fila).getId());
+            
+            call.enqueue(new Callback<List<Respuesta>>(){
+                @Override
+                public void onResponse(Call<List<Respuesta>> call, Response<List<Respuesta>> rspns) {
+                    mensaje = rspns.body();
+                    if(mensaje.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Sin conexion");
+                    }else{
+                        JOptionPane.showMessageDialog(null, mensaje.get(0).getRespuesta());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Respuesta>> call, Throwable thrwbl) {
+                    JOptionPane.showMessageDialog(null, "Error en el servicio // "+thrwbl.getMessage());
+                }
+            });
+        
+            
+        }
+        Consulta();
+    }
+    
     public void Consulta(){
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
         Object nf[] = {null, null, null, null};
